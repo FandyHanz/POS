@@ -4,7 +4,7 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-                <a class="btn btn-sm btn-primary mt-1" href="{{ url('level/create') }}">Tambah</a>
+                <a class="btn btn-sm btn-primary mt-1" href="{{ url('supplier/create') }}">Tambah</a>
             </div>
         </div>
         <div class="card-body">
@@ -19,8 +19,9 @@
                 <thead>
                     <tr>
                         <th>NO</th>
-                        <th>Level kode</th>
-                        <th>nama</th>
+                        <th>supplier kode</th>
+                        <th>supplier nama</th>
+                        <th>supplier alamat</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -35,10 +36,9 @@
                         // serverSide: true, jika ingin menggunakan server side processing
                         serverSide: true,
                         ajax: {
-                            "url": "{{ url('level/list') }}",
+                            "url": "{{ url('supplier/list') }}",
                             "dataType": "json",
                             "type": "POST",
-
                         },
                         columns: [{
                             // nomor urut dari laravel datatable addIndexColumn()
@@ -47,14 +47,19 @@
                             orderable: false,
                             searchable: false
                         }, {
-                            data: "level_kode",
+                            data: "supplier_kode",
                             className: "",
                             // orderable: true, jika ingin kolom ini bisa diurutkan
                             orderable: true,
                             // searchable: true, jika ingin kolom ini bisa dicari
                             searchable: true
                         }, {
-                            data: "level_nama",
+                            data: "supplier_nama",
+                            className: "",
+                            orderable: true,
+                            searchable: true
+                        }, {
+                            data: "supplier_alamat",
                             className: "",
                             orderable: true,
                             searchable: true

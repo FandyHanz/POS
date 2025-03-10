@@ -4,7 +4,7 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-                <a class="btn btn-sm btn-primary mt-1" href="{{ url('level/create') }}">Tambah</a>
+                <a class="btn btn-sm btn-primary mt-1" href="{{ url('barang/create') }}">Tambah</a>
             </div>
         </div>
         <div class="card-body">
@@ -19,8 +19,11 @@
                 <thead>
                     <tr>
                         <th>NO</th>
-                        <th>Level kode</th>
-                        <th>nama</th>
+                        <th>kategori id</th>
+                        <th>barang kode</th>
+                        <th>barang nama</th>
+                        <th>harga beli</th>
+                        <th>harga jual</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -35,7 +38,7 @@
                         // serverSide: true, jika ingin menggunakan server side processing
                         serverSide: true,
                         ajax: {
-                            "url": "{{ url('level/list') }}",
+                            "url": "{{ url('barang/list') }}",
                             "dataType": "json",
                             "type": "POST",
 
@@ -47,14 +50,29 @@
                             orderable: false,
                             searchable: false
                         }, {
-                            data: "level_kode",
+                            data: "kategori_id",
                             className: "",
                             // orderable: true, jika ingin kolom ini bisa diurutkan
                             orderable: true,
                             // searchable: true, jika ingin kolom ini bisa dicari
                             searchable: true
                         }, {
-                            data: "level_nama",
+                            data: "barang_kode",
+                            className: "",
+                            orderable: true,
+                            searchable: true
+                        }, {
+                            data: "barang_nama",
+                            className: "",
+                            orderable: true,
+                            searchable: true
+                        }, {
+                            data: "harga_beli",
+                            className: "",
+                            orderable: true,
+                            searchable: true
+                        }, {
+                            data: "harga_jual",
                             className: "",
                             orderable: true,
                             searchable: true
