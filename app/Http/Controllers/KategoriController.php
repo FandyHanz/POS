@@ -19,7 +19,7 @@ class KategoriController extends Controller
             'title' => 'Daftar kategori yang terdaftar dalam sistem'
         ];
 
-        $activeMenu = 'user';
+        $activeMenu = 'kategori';
         return view('kategori', ['breadcrumb' => $breadCrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
     }
 

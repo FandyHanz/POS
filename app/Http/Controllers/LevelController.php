@@ -20,7 +20,7 @@ class LevelController extends Controller
             'title' => 'Daftar level yang terdaftar dalam sistem'
         ];
 
-        $activeMenu = 'user';
+        $activeMenu = 'level';
         $level = LevelModel::all();
 
         return view('level', ['breadcrumb' => $breadCrumb, 'page' => $page, 'level' => $level, 'activeMenu' => $activeMenu]);

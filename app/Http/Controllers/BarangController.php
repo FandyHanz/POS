@@ -20,7 +20,7 @@ class BarangController extends Controller
             'title' => 'Daftar barang yang terdaftar dalam sistem'
         ];
 
-        $activeMenu = 'user';
+        $activeMenu = 'barang';
         $barang = BarangModel::all();
 
         return view('barang', ['breadcrumb' => $breadCrumb, 'page' => $page, 'barang' => $barang, 'activeMenu' => $activeMenu]);
