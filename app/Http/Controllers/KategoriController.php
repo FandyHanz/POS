@@ -20,7 +20,7 @@ class KategoriController extends Controller
         ];
 
         $activeMenu = 'kategori';
-        return view('kategori', ['breadcrumb' => $breadCrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
+        return view('Kategori.kategori', ['breadcrumb' => $breadCrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
     }
 
     public function list(Request $request)

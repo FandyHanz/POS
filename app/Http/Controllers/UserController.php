@@ -24,7 +24,7 @@ class UserController extends Controller
         $activeMenu = 'user';
         $level = LevelModel::all();
 
-        return view('index', ['breadcrumb' => $breadCrumb, 'page' => $page, 'level' => $level, 'activeMenu' => $activeMenu]);
+        return view('User.index', ['breadcrumb' => $breadCrumb, 'page' => $page, 'level' => $level, 'activeMenu' => $activeMenu]);
     }
 
     public function list(Request $request)

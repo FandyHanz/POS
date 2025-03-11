@@ -23,7 +23,7 @@ class LevelController extends Controller
         $activeMenu = 'level';
         $level = LevelModel::all();
 
-        return view('level', ['breadcrumb' => $breadCrumb, 'page' => $page, 'level' => $level, 'activeMenu' => $activeMenu]);
+        return view('Level.level', ['breadcrumb' => $breadCrumb, 'page' => $page, 'level' => $level, 'activeMenu' => $activeMenu]);
     }
 
     public function list(Request $request)

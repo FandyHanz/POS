@@ -23,7 +23,7 @@ class BarangController extends Controller
         $activeMenu = 'barang';
         $barang = BarangModel::all();
 
-        return view('barang', ['breadcrumb' => $breadCrumb, 'page' => $page, 'barang' => $barang, 'activeMenu' => $activeMenu]);
+        return view('Barang.barang', ['breadcrumb' => $breadCrumb, 'page' => $page, 'barang' => $barang, 'activeMenu' => $activeMenu]);
     }
 
     public function list(Request $request)

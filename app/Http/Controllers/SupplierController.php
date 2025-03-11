@@ -19,7 +19,7 @@ class SupplierController extends Controller
         ];
 
         $activeMenu = 'supplier';
-        return view('supplier', ['breadcrumb' => $breadCrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
+        return view('Supplier.supplier', ['breadcrumb' => $breadCrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
     }
 
     public function list(Request $request)
