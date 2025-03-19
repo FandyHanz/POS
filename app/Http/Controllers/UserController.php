@@ -178,7 +178,7 @@ confirm(\'Apakah Anda yakit menghapus data ini?\');">Hapus</button></form>';*/
     public function create_ajax()
     {
         $level = LevelModel::select('level_id', 'level_nama')->get();
-        return view('user.create_ajax', ['level' => $level]);
+        return view('User.create_ajax', ['level' => $level]);
     }
 
     public function store_ajax(Request $request)
@@ -208,6 +208,11 @@ confirm(\'Apakah Anda yakit menghapus data ini?\');">Hapus</button></form>';*/
             ]);
         }
         redirect('/');
+    }
+
+    public function show_ajax(String $id){
+        $user = UserModel::find($id);
+        return view('User.show_ajax', ['user' => $user]);
     }
 
     public function edit_ajax(String $id)
@@ -267,11 +272,18 @@ confirm(\'Apakah Anda yakit menghapus data ini?\');">Hapus</button></form>';*/
         if ($request->ajax() || $request->wantsJson()) {
             $user = UserModel::find($id);
             if ($user) {
-                $user->delete();
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Data berhasil dihapus'
-                ]);
+                try {
+                    $user->delete();
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Data berhasil dihapus'
+                    ]);
+                } catch (\Exception $e) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Terjadi kesalahan saat menghapus data: data masih berhubungan dengan data lain'
+                    ]);
+                }
             } else {
                 return response()->json([
                     'status' => false,
