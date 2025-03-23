@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+
     public function login()
     {
         if (Auth::check()) { // jika sudah login, maka redirect ke halaman home
@@ -43,4 +44,3 @@ class AuthController extends Controller
         return redirect('login');
     }
 }
-

@@ -22,9 +22,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::pattern('id', '[0-9]+');
-Route::get('login', [AuthController::class, 'login']) -> name('login');
+Route::get('login', [AuthController::class, 'login'])->name('login');
 Route::post('login', [AuthController::class, 'postlogin']);
-Route::get('logout', [AuthController::class, 'logout']) -> middleware('auth');
+Route::get('logout', [AuthController::class, 'logout'])->middleware('auth');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [WellcomeController::class, 'index']);
@@ -47,6 +47,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{id}', [UserController::class, 'destroy']);
     });
     
+Route::middleware(['authorize:ADM'])->group(function () {
     Route::group(['prefix' => 'level'], function () {
         Route::get('/', [LevelController::class, 'index']);
         Route::post('/list', [LevelController::class, 'list']);
@@ -64,6 +65,8 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/{id}', [LevelController::class, 'update']);
         Route::delete('/{id}', [LevelController::class, 'destroy']);
     });
+});
+
     
     Route::group(['prefix' => 'kategori'], function () {
         Route::get('/', [KategoriController::class, 'index']);
