@@ -51,6 +51,11 @@
                   <p>Data Supplier</p>
               </a>
           </li>
+          <li class="nav-item">
+            <a href="{{ url('/logout') }}" class="nav-link {{ $activeMenu == 'logout' ? 'active' : '' }} ">
+                <p>logout</p>
+            </a>
+        </li>
             {{-- <li class="nav-header">Data Transaksi</li>
             <li class="nav-item">
                 <a href="{{ url('/barang') }}" class="nav-link {{ $activeMenu == 'penjualan' ? 'active' : '' }} ">
