@@ -46,16 +46,17 @@
                 </a>
             </li>
             <li class="nav-item">
-              <a href="{{ url('/supplier') }}" class="nav-link {{ $activeMenu == 'supplier' ? 'active' : '' }} ">
-                  <i class="nav-icon fas fa-cubes"></i>
-                  <p>Data Supplier</p>
-              </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ url('/logout') }}" class="nav-link {{ $activeMenu == 'logout' ? 'active' : '' }} ">
-                <p>logout</p>
-            </a>
-        </li>
+                <a href="{{ url('/supplier') }}" class="nav-link {{ $activeMenu == 'supplier' ? 'active' : '' }} ">
+                    <i class="nav-icon fas fa-cubes"></i>
+                    <p>Data Supplier</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('/logout') }}" class="nav-link {{ $activeMenu == 'logout' ? 'active' : '' }} ">
+                    <i class="fas fa-sign-out-alt mr-2"></i>
+                    <p>Logout</p>
+                </a>
+            </li>
             {{-- <li class="nav-header">Data Transaksi</li>
             <li class="nav-item">
                 <a href="{{ url('/barang') }}" class="nav-link {{ $activeMenu == 'penjualan' ? 'active' : '' }} ">

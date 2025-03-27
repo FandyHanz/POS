@@ -4,6 +4,7 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
+                <button onclick="modalAction('{{ url('level/import') }}')" class="btn btninfo">Import level</button>
                 <a class="btn btn-sm btn-primary mt-1" href="{{ url('level/create') }}">Tambah</a>
                 <button onclick="modalAction('{{ url('level/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah
                     Ajax</button>
@@ -75,6 +76,16 @@
                             orderable: false,
                             searchable: false
                         }]
+                    });
+
+                    $('#table_user_filter input').unbind().bind().on('keyup', function(e) {
+                        if (e.keyCode == 13) {
+                            dataUser.search(this.value).draw();
+                        }
+                    });
+
+                    $('#level_id').change(function() {
+                        dataUser.draw();
                     });
                 });
             </script>
