@@ -5,7 +5,7 @@
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
                 <button onclick="modalAction('{{ url('level/import') }}')" class="btn btninfo">Import level</button>
-                <a class="btn btn-sm btn-primary mt-1" href="{{ url('level/create') }}">Tambah</a>
+                <a href="{{ url('level/export_excel') }}" class="btn btn-primary"><i class="fa fa-fileexcel"></i> Export Level</a>
                 <button onclick="modalAction('{{ url('level/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah
                     Ajax</button>
             </div>
@@ -44,8 +44,7 @@
                 var dataUser;
                 $(document).ready(function() {
                     dataUser = $('#table_user').DataTable({
-                        // serverSide: true, jika ingin menggunakan server side processing
-                        serverSide: true,
+                    serverSide: true,
                         ajax: {
                             "url": "{{ url('level/list') }}",
                             "dataType": "json",
@@ -76,17 +75,17 @@
                             orderable: false,
                             searchable: false
                         }]
-                    });
+                });
 
-                    $('#table_user_filter input').unbind().bind().on('keyup', function(e) {
-                        if (e.keyCode == 13) {
-                            dataUser.search(this.value).draw();
-                        }
-                    });
+                $('#table_user_filter input').unbind().bind().on('keyup', function(e) {
+                    if (e.keyCode == 13) {
+                        dataUser.search(this.value).draw();
+                    }
+                });
 
-                    $('#level_id').change(function() {
-                        dataUser.draw();
-                    });
+                $('#level_id').change(function() {
+                dataUser.draw();
+                });
                 });
             </script>
         @endpush
