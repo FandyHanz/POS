@@ -3,7 +3,7 @@
     <div id="myModal" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Import Data kategori</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Import Data Supplier</h5>
                 <button type="button" class="close" data-dismiss="modal" arialabel="Close"><span
                         aria-hidden="true">&times;</span></button>
             </div>
@@ -52,7 +52,7 @@
                                 title: 'Berhasil',
                                 text: response.message
                             });
-                            tableBarang.ajax.reload(); // reload datatable
+                            dataUser.ajax.reload(); // reload datatable
                         } else { // jika error
                             $('.error-text').text('');
                             $.each(response.msgField, function(prefix, val) {
