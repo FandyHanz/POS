@@ -52,9 +52,23 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="{{ url('/stok') }}" class="nav-link {{ $activeMenu == 'stok' ? 'active' : '' }} ">
+                    <i class="nav-icon fas fa-cash-register"></i>
+                    <p>Stok barang</p>
+                </a>
+            </li>
+            <li class="nav-header">Data transaksi</li>
+            <li class="nav-item">
+                <a href="{{ url('/penjualan') }}"
+                    class="nav-link {{ $activeMenu == 'penjualan' ? 'active' : '' }} ">
+                    <i class="nav-icon fa fa-shopping-cart"></i>
+                    <p>Penjualan produk</p>
+                </a>
+            </li>
+            <li class="btn btn-block btn-danger btn-sm">
                 <a href="{{ url('/logout') }}" class="nav-link {{ $activeMenu == 'logout' ? 'active' : '' }} ">
-                    <i class="fas fa-sign-out-alt mr-2"></i>
-                    <p>Logout</p>
+                    <i class="nav-icon fas fa-sign-out-alt mr-2"></i>
+                    <p><b>Logout</b></p>
                 </a>
             </li>
             {{-- <li class="nav-header">Data Transaksi</li>

@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,6 +17,7 @@ class AuthController extends Controller
 
     public function postlogin(Request $request)
     {
+
         if ($request->ajax() || $request->wantsJson()) {
             $credentials = $request->only('username', 'password');
             if (Auth::attempt($credentials)) {
@@ -30,7 +29,7 @@ class AuthController extends Controller
             }
             return response()->json([
                 'status' => false,
-                'message' => 'Login Gagal'
+                'message' => 'Login Gagal, periksa kembali username dan password'
             ]);
         }
         return redirect('login');
