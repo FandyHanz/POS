@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BarangModel;
 use App\Models\PenjualanDetailModel;
 use App\Models\PenjualanModel;
 use App\Models\UserModel;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Yajra\DataTables\Facades\DataTables;
+use App\Http\Controllers\Str;
 
 class PenjualanController extends Controller
 {
@@ -48,8 +51,8 @@ class PenjualanController extends Controller
                 //     '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakit menghapus data ini?\');">Hapus</button></form>';
                 $btn = '<button onclick="modalAction(\'' . url('/penjualan/' . $penjualan->penjualan_id .
                     '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/penjualan/' . $penjualan->penjualan_id .
-                    '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
+                // $btn .= '<button onclick="modalAction(\'' . url('/penjualan/' . $penjualan->penjualan_id .
+                //     '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
                 $btn .= '<button onclick="modalAction(\'' . url('/penjualan/' . $penjualan->penjualan_id .
                     '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
                 return $btn;
@@ -61,34 +64,53 @@ class PenjualanController extends Controller
     public function create_ajax()
     {
         $user = UserModel::select('user_id', 'nama')->get();
-        return view('Penjualan.create', ['user' => $user]);
+        $PenjualanDetail = PenjualanDetailModel::select('barang_id', 'jumlah')->get();
+        $barang = BarangModel::all();
+        return view('Penjualan.create', ['user' => $user, 'penjualanDetail' => $PenjualanDetail, 'barang' => $barang]);
     }
 
     public function store_ajax(Request $request)
     {
-        if ($request->ajax() || $request->wantsJson()) {
-            $rules = [
-                'user_id' => 'required|integer',
-                'pembeli' => 'required|max:100', // nama harus diisi, berupa string, dan maksi
-                'penjualan_kode' => 'required|string|max:100', // password harus diisi dan minimal 5 karakter
-                'penjualan_tanggal' => 'required|date_format:Y-m-d', // level_id harus diisi dan berupa angka
-            ];
-
-            $validator = Validator::make($request->all(), $rules);
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Validasi Gagal',
-                    'msgField' => $validator->errors(),
+        $request->validate([
+            'pembeli' => 'required|string|max:255',
+            'user_id' => 'required|exists:m_user,user_id',
+            'penjualan_tanggal' => 'required|date',
+            'barang_id' => 'required|array|min:1',
+            'barang_id.*' => 'required|exists:m_barang,barang_id',
+            'harga' => 'required|array',
+            'harga.*' => 'required|numeric|min:0',
+            'jumlah' => 'required|array',
+            'jumlah.*' => 'required|integer|min:1',
+        ]);
+    
+        try {
+            $penjualan = PenjualanModel::create([
+                'user_id' => $request->user_id,
+                'pembeli' => $request->pembeli,
+                'penjualan_kode' => $request->penjualan_kode,
+                'penjualan_tanggal' => $request->penjualan_tanggal,
+            ]);
+    
+            $dataDetail = [];
+            foreach ($request->barang_id as $i => $barangId) {
+                $dataDetail[] = new PenjualanDetailModel([
+                    'barang_id' => $barangId,
+                    'harga' => $request->harga[$i],
+                    'jumlah' => $request->jumlah[$i],
                 ]);
             }
-
-            PenjualanModel::create($request->all());
-
+    
+            $penjualan->detail()->saveMany($dataDetail);
+    
             return response()->json([
-                'status' => true,
-                'message' => 'Data user berhasil disimpan'
+                'status' => 'success',
+                'message' => 'Transaksi berhasil disimpan.',
             ]);
+        } catch (QueryException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menyimpan transaksi. ' . $e->getMessage(),
+            ], 500);
         }
         return redirect('/');
     }
@@ -111,51 +133,51 @@ class PenjualanController extends Controller
         return view('Penjualan.show', ['breadcrumb' => $breadcrumb, 'page' => $page, 'Penjualan' => $Penjualan, 'PenjualanDetail' => $PenjualanDetail, 'activeMenu' => $activeMenu]);
     }
 
-    public function edit_ajax(String $id)
-    {
-        $penjualan = PenjualanModel::find($id);
-        $user = UserModel::select('user_id', 'nama')->get();
-        $PenjualanDetail = PenjualanDetailModel::select('detail_id', 'penjualan_id') -> get();
-        return view('Penjualan.edit', ['penjualan' => $penjualan, 'user' => $user, 'PenjulanDetail' => $PenjualanDetail]);
-    }
+    // public function edit_ajax(String $id)
+    // {
+    //     $penjualan = PenjualanModel::find($id);
+    //     $user = UserModel::select('user_id', 'nama')->get();
+    //     $PenjualanDetail = PenjualanDetailModel::select('detail_id', 'penjualan_id') -> get();
+    //     return view('Penjualan.edit', ['penjualan' => $penjualan, 'user' => $user, 'PenjulanDetail' => $PenjualanDetail]);
+    // }
 
-    public function update_ajax(Request $request, $id)
-    {
-        // cek apakah request dari ajax
-        if ($request->ajax() || $request->wantsJson()) {
-            $rules = [
-                'user_id' => 'required|integer',
-                'pembeli' => 'required|max:100', // nama harus diisi, berupa string, dan maksi
-                'penjualan_kode' => 'required|string|max:100',
-                'penjualan_tanggal' => 'required|date_format:Y-m-d'
-            ];
-            $validator = Validator::make($request->all(), $rules);
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false, // respon json, true: berhasil, false: gagal
-                    'message' => 'Validasi gagal.',
-                    'msgField' => $validator->errors() // menunjukkan field mana yang error
-                ]);
-            }
-            $check = PenjualanModel::find($id);
-            if ($check) {
-                if (!$request->filled('penjualan_id')) { // jika password tidak diisi, maka hapus dari request
-                    $request->request->remove('penjualan_id');
-                }
-                $check->update($request->all());
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Data berhasil diupdate'
-                ]);
-            } else {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Data tidak ditemukan'
-                ]);
-            }
-        }
-        return redirect('/');
-    }
+    // public function update_ajax(Request $request, $id)
+    // {
+    //     // cek apakah request dari ajax
+    //     if ($request->ajax() || $request->wantsJson()) {
+    //         $rules = [
+    //             'user_id' => 'required|integer',
+    //             'pembeli' => 'required|max:100', // nama harus diisi, berupa string, dan maksi
+    //             'penjualan_kode' => 'required|string|max:100',
+    //             'penjualan_tanggal' => 'required|date_format:Y-m-d'
+    //         ];
+    //         $validator = Validator::make($request->all(), $rules);
+    //         if ($validator->fails()) {
+    //             return response()->json([
+    //                 'status' => false, // respon json, true: berhasil, false: gagal
+    //                 'message' => 'Validasi gagal.',
+    //                 'msgField' => $validator->errors() // menunjukkan field mana yang error
+    //             ]);
+    //         }
+    //         $check = PenjualanModel::find($id);
+    //         if ($check) {
+    //             if (!$request->filled('penjualan_id')) { // jika password tidak diisi, maka hapus dari request
+    //                 $request->request->remove('penjualan_id');
+    //             }
+    //             $check->update($request->all());
+    //             return response()->json([
+    //                 'status' => true,
+    //                 'message' => 'Data berhasil diupdate'
+    //             ]);
+    //         } else {
+    //             return response()->json([
+    //                 'status' => false,
+    //                 'message' => 'Data tidak ditemukan'
+    //             ]);
+    //         }
+    //     }
+    //     return redirect('/');
+    // }
 
     public function confrim_ajax(String $id)
     {
@@ -191,61 +213,61 @@ class PenjualanController extends Controller
         return redirect('/');
     }
 
-    public function import()
-    {
-        return view('Penjualan.import');
-    }
-    public function import_ajax(Request $request)
-    {
-        if ($request->ajax() || $request->wantsJson()) {
-            $rules = [
-                // validasi file harus xls atau xlsx, max 1MB
-                'file_penjualan' => 'required|mimes:xls,xlsx|max:1024'
-            ];
-            $validator = Validator::make($request->all(), $rules);
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Validasi Gagal',
-                    'msgField' => $validator->errors()
-                ]);
-            }
-            $file = $request->file('file_penjualan'); // ambil file dari request
-            $reader = IOFactory::createReader('Xlsx'); // load reader file excel
-            $reader->setReadDataOnly(true); // hanya membaca data
-            $spreadsheet = $reader->load($file->getRealPath()); // load file excel
-            $sheet = $spreadsheet->getActiveSheet(); // ambil sheet yang aktif
-            $data = $sheet->toArray(null, false, true, true); // ambil data excel
-            $insert = [];
-            if (count($data) > 1) { // jika data lebih dari 1 baris
-                foreach ($data as $baris => $value) {
-                    if ($baris > 1) { // baris ke 1 adalah header, maka lewati
-                        $insert[] = [
-                            'user_id' => $value['A'],
-                            'pembeli' => $value['B'],
-                            'penjualan_kode' => $value['C'],
-                            'penjualan_tanggal' => now(),
-                            'created_at' => now(),
-                        ];
-                    }
-                }
-                if (count($insert) > 0) {
-                    // insert data ke database, jika data sudah ada, maka diabaikan
-                    PenjualanModel::insertOrIgnore($insert);
-                }
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Data berhasil di import'
-                ]);
-            } else {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Tidak ada data yang di import'
-                ]);
-            }
-        }
-        return redirect('/');
-    }
+    // public function import()
+    // {
+    //     return view('Penjualan.import');
+    // }
+    // public function import_ajax(Request $request)
+    // {
+    //     if ($request->ajax() || $request->wantsJson()) {
+    //         $rules = [
+    //             // validasi file harus xls atau xlsx, max 1MB
+    //             'file_penjualan' => 'required|mimes:xls,xlsx|max:1024'
+    //         ];
+    //         $validator = Validator::make($request->all(), $rules);
+    //         if ($validator->fails()) {
+    //             return response()->json([
+    //                 'status' => false,
+    //                 'message' => 'Validasi Gagal',
+    //                 'msgField' => $validator->errors()
+    //             ]);
+    //         }
+    //         $file = $request->file('file_penjualan'); // ambil file dari request
+    //         $reader = IOFactory::createReader('Xlsx'); // load reader file excel
+    //         $reader->setReadDataOnly(true); // hanya membaca data
+    //         $spreadsheet = $reader->load($file->getRealPath()); // load file excel
+    //         $sheet = $spreadsheet->getActiveSheet(); // ambil sheet yang aktif
+    //         $data = $sheet->toArray(null, false, true, true); // ambil data excel
+    //         $insert = [];
+    //         if (count($data) > 1) { // jika data lebih dari 1 baris
+    //             foreach ($data as $baris => $value) {
+    //                 if ($baris > 1) { // baris ke 1 adalah header, maka lewati
+    //                     $insert[] = [
+    //                         'user_id' => $value['A'],
+    //                         'pembeli' => $value['B'],
+    //                         'penjualan_kode' => $value['C'],
+    //                         'penjualan_tanggal' => now(),
+    //                         'created_at' => now(),
+    //                     ];
+    //                 }
+    //             }
+    //             if (count($insert) > 0) {
+    //                 // insert data ke database, jika data sudah ada, maka diabaikan
+    //                 PenjualanModel::insertOrIgnore($insert);
+    //             }
+    //             return response()->json([
+    //                 'status' => true,
+    //                 'message' => 'Data berhasil di import'
+    //             ]);
+    //         } else {
+    //             return response()->json([
+    //                 'status' => false,
+    //                 'message' => 'Tidak ada data yang di import'
+    //             ]);
+    //         }
+    //     }
+    //     return redirect('/');
+    // }
 
     public function export_pdf()
     {

@@ -7,6 +7,7 @@
                 <button onclick="modalAction('{{ url('stok/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah data</button>
                 <button onclick="modalAction('{{ url('stok/import') }}')" class="btn btninfo">Import Barang</button>
                 <a href="{{ url('stok/export_excel') }}" class="btn btn-primary"><i class="fa fa-fileexcel"></i> Export Barang excel</a>
+                <a href="{{ url('stok/export_pdf') }}" class="btn btn-warning"><i class="fa fa-filepdf"></i> Export stok pdf</a>
             </div>
         </div>
         <div class="card-body">
@@ -37,7 +38,7 @@
                         <th>NO</th>
                         <th>nama supplier</th>
                         <th>nama barang</th>
-                        <th>nama penerima</th>
+                        <th>nama penginput</th>
                         <th>tanggal terima</th>
                         <th>jumlah stok</th>
                         <th>Aksi</th>

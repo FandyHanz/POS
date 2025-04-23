@@ -6,6 +6,7 @@ use App\Models\BarangModel;
 use App\Models\StokModel;
 use App\Models\SupplierModel;
 use App\Models\UserModel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -62,7 +63,7 @@ class StokController extends Controller
     public function create_ajax()
     {
         $barang = BarangModel::select('barang_id', 'barang_nama')->get();
-        $supplier = SupplierModel::select('supp_id', 'supplier_nama')->get();
+        $supplier = SupplierModel::select('supplier_id', 'supplier_nama')->get();
         $user = UserModel::select('user_id', 'nama')->get();
         return view('Stok.create', ['supplier' => $supplier, 'barang' => $barang, 'user' => $user]);
     }
@@ -107,7 +108,7 @@ class StokController extends Controller
     {
         $stok = StokModel::find($id);
         $barang = BarangModel::select('barang_id', 'barang_nama')->get();
-        $supplier = SupplierModel::select('supp_id', 'supplier_nama')->get();
+        $supplier = SupplierModel::select('supplier_id', 'supplier_nama')->get();
         $user = UserModel::select('user_id', 'nama')->get();
         return view('Stok.edit', ['stok' => $stok, 'barang' => $barang, 'supplier' => $supplier, 'user' => $user]);
     }
@@ -290,6 +291,17 @@ class StokController extends Controller
         header('Pragma: public');
         $writer->save('php://output');
         exit;
+    }
+
+    public function export_pdf()
+    {
+        $stok = StokModel::select('supp_id', 'barang_id', 'user_id', 'stok_tanggal', 'stok_jumlah')
+        ->with('supplier', 'barang', 'user')->get();
+        $pdf = Pdf::loadView('stok.pdf', ['stok' => $stok]);
+        $pdf->setPaper('a4', 'portrait'); // set ukuran kertas dan orientasi
+        $pdf->setOption("isRemoteEnabled", true); // set true jika ada gambar dari url
+        $pdf->render();
+        return $pdf->stream('Data Penjualan' . date('Y-m-d H:i:s') . '.pdf');
     }
 
 }

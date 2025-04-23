@@ -29,10 +29,10 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Nama Supplier</label>
-                        <select name="supplier_id" id="supplier_id" class="form-control" required>
+                        <select name="supp_id" id="supp_id" class="form-control" required>
                             <option value="">- Pilih nama supplier -</option>
                             @foreach ($supplier as $k)
-                                <option {{ $k->supplier_id == $stok->supplier_id ? 'selected' : '' }} value="{{ $k->supplier_id }}">
+                                <option {{ $k->supplier_id == $stok->supp_id ? 'selected' : '' }} value="{{ $k->supplier_id }}">
                                     {{ $k->supplier_nama }}</option>
                             @endforeach
                         </select>
@@ -50,15 +50,10 @@
                         <small id="error-barang_id" class="error-text form-text textdanger"></small>
                     </div>
                     <div class="form-group">
-                        <label>Nama penerima</label>
-                        <select name="user_id" id="user_id" class="form-control" required>
-                            <option value="">- Pilih nama penerima -</option>
-                            @foreach ($user as $k)
-                                <option {{ $k->user_id == $stok->user_id ? 'selected' : '' }} value="{{ $k->user_id }}">
-                                    {{ $k->nama }}</option>
-                            @endforeach
-                        </select>
-                        <small id="error-user_id" class="error-text form-text textdanger"></small>
+                        <label for="user_id">Nama penginput</label>
+                        <input type="text" class="form-control" value="{{ $stok->user->nama ?? '' }}" readonly>
+                        <input type="hidden" name="user_id" value="{{ $stok->user_id ?? '' }}">
+                        <small id="error-user_id" class="error-text form-text text-danger"></small>
                     </div>
                     <div class="form-group">
                         <label>tanggal terima</label>

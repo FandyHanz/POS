@@ -1,95 +1,180 @@
-<form action="{{ url('penjualan/ajax') }}" method="POST" id="form-tambah">
+<form action="{{ url('/penjualan/ajax') }}" method="POST" id="form-penjualan">
     @csrf
-    <div id="myModal" class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Tambah Data barang</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
+                <h5 class="modal-title">Transaksi Penjualan</h5>
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
             </div>
+
             <div class="modal-body">
+                {{-- Data Umum --}}
                 <div class="form-group">
-                    <label>list kasir</label>
-                    <select name="user_id" id="user_id" class="form-control" required>
-                        <option value="">- Pilih kasir -</option>
-                        @foreach($user as $k)
-                            <option value="{{ $k->user_id }}">{{ $k->nama }}</option>
+                    <label>Nama Pembeli</label>
+                    <input type="text" name="pembeli" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Kasir</label>
+                    <select class="form-control" name="user_id" required>
+                        <option value="">- Pilih -</option>
+                        @foreach ($user as $item)
+                            <option value="{{ $item->user_id }}">{{ $item->nama }}</option>
                         @endforeach
                     </select>
-                    <small id="error-user_id" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
-                    <label>pembeli</label>
-                    <input value="" type="text" name="pembeli" id="pembeli" class="form-control" required>
-                    <small id="error-pembeli" class="error-text form-text text-danger"></small>
+                    <label>Kode Penjualan</label>
+                    <input type="text" name="penjualan_kode" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label>kode barang</label>
-                    <input value="" type="text" name="penjualan_kode" id="penjualan_kode" class="form-control" required>
-                    <small id="error-penjualan_kode" class="error-text form-text text-danger"></small>
+                    <label>Tanggal Pembelian</label>
+                    <input type="date" name="penjualan_tanggal" id="tanggal" class="form-control" required>
                 </div>
-                <div class="form-group">
-                    <label>tanggal pembelian</label>
-                    <input value="" type="date" name="penjualan_tanggal" id="penjualan_tanggal" class="form-control" required>
-                    <small id="error-penjualan_tanggal" class="error-text form-text text-danger"></small>
+
+                {{-- Detail Barang --}}
+                <h6>Barang</h6>
+                <table class="table table-sm" id="table-barang">
+                    <thead>
+                        <tr>
+                            <th>Barang</th>
+                            <th>Harga</th>
+                            <th>Jumlah</th>
+                            <th>Subtotal</th>
+                            <th><button type="button" class="btn btn-sm btn-success" id="addRow">+</button></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <select name="barang_id[]" class="form-control barang-select" required>
+                                    <option value="">Pilih</option>
+                                    @foreach ($barang as $b)
+                                        <option value="{{ $b->barang_id }}" data-harga="{{ $b->harga_jual }}">
+                                            {{ $b->barang_kode }} - {{ $b->barang_nama }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </td>
+                            <td><input type="number" name="harga[]" class="form-control harga" readonly></td>
+                            <td><input type="number" name="jumlah[]" class="form-control jumlah" value="1"
+                                    required></td>
+                            <td><input type="number" name="subtotal[]" class="form-control subtotal" readonly></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="text-right">
+                    <strong>Total: <span id="total">Rp 0</span></strong>
                 </div>
             </div>
+
             <div class="modal-footer">
-                <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>
                 <button type="submit" class="btn btn-primary">Simpan</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
             </div>
         </div>
     </div>
 </form>
+
 <script>
-    $(document).ready(function () {
-        $("#form-tambah").validate({
-            rules: {
-                user_id: { required: true, number: true },
-                pembeli: { required: true, minlength: 3, maxlength: 20 },
-                penjualan_kode: { required: true, minlength: 3, maxlength: 100 },
-                penjualan_tanggal: { required: true}
+    $('#form-penjualan').on('submit', function(e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: $(this).attr('action'),
+            method: "POST",
+            data: $(this).serialize(),
+            success: function(res) {
+                if (res.status === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: res.message,
+                    }).then(() => {
+                        location.reload(); // atau reset form
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Peringatan',
+                        text: res.message,
+                    });
+                }
             },
-            submitHandler: function (form) {
-                $.ajax({
-                    url: form.action,
-                    type: form.method,
-                    data: $(form).serialize(),
-                    success: function (response) {
-                        if (response.status) {
-                            $('#myModal').modal('hide');
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil',
-                                text: response.message
-                            });
-                            dataUser.ajax.reload();
-                        } else {
-                            $('.error-text').text('');
-                            $.each(response.msgField, function (prefix, val) {
-                                $('#error-' + prefix).text(val[0]);
-                            });
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Terjadi Kesalahan',
-                                text: response.message
-                            });
-                        }
-                    }
+            error: function(xhr) {
+                let msg = xhr.responseJSON?.message || 'Terjadi kesalahan.';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: msg,
                 });
-                return false;
-            },
-            errorElement: 'span',
-            errorPlacement: function (error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-group').append(error);
-            },
-            highlight: function (element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function (element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
             }
+        });
+    });
+    $(document).ready(function() {
+        // Auto-set tanggal ke hari ini
+        $('#tanggal').val(new Date().toISOString().slice(0, 10));
+
+        function formatRupiah(angka) {
+            return 'Rp ' + angka.toLocaleString('id-ID');
+        }
+
+        function hitungSubtotal(row) {
+            let harga = parseFloat(row.find('.harga').val()) || 0;
+            let jumlah = parseInt(row.find('.jumlah').val()) || 0;
+            let subtotal = harga * jumlah;
+            row.find('.subtotal').val(subtotal);
+            return subtotal;
+        }
+
+        function hitungTotal() {
+            let total = 0;
+            $('#table-barang tbody tr').each(function() {
+                total += hitungSubtotal($(this));
+            });
+            $('#total').text(formatRupiah(total));
+        }
+
+        $('#table-barang').on('change', '.barang-select', function() {
+            let harga = parseFloat($(this).find(':selected').data('harga')) || 0;
+            let row = $(this).closest('tr');
+            row.find('.harga').val(harga);
+            hitungSubtotal(row);
+            hitungTotal();
+        });
+
+        $('#table-barang').on('input', '.jumlah', function() {
+            let row = $(this).closest('tr');
+            hitungSubtotal(row);
+            hitungTotal();
+        });
+
+        $('#addRow').click(function() {
+            const newRow = `
+            <tr>
+            <td>
+                <select name="barang_id[]" class="form-control barang-select" required>
+                    <option value="">Pilih</option>
+                    @foreach ($barang as $b)
+                        <option value="{{ $b->barang_id }}" data-harga="{{ $b->harga_jual }}">
+                            {{ $b->barang_kode }} - {{ $b->barang_nama }}
+                        </option>
+                    @endforeach
+                </select>
+            </td>
+            <td><input type="number" name="harga[]" class="form-control harga" readonly></td>
+            <td><input type="number" name="jumlah[]" class="form-control jumlah" value="1" required></td>
+            <td><input type="number" name="subtotal[]" class="form-control subtotal" readonly></td>
+            <td>
+                <button type="button" class="btn btn-danger removeRow">Hapus</button>
+            </td>
+        </tr>
+        `;
+            $("#table-barang tbody").append(newRow);
+        });
+        $(document).on('click', '.removeRow', function() {
+            $(this).closest('tr').remove();
+            hitungTotal();
         });
     });
 </script>

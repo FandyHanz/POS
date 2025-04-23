@@ -10,7 +10,7 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label>Nama supplier</label>
-                    <select name="supplier_id" id="supplier_id" class="form-control" required>
+                    <select name="supp_id" id="supp_id" class="form-control" required>
                         <option value="">- Pilih supplier -</option>
                         @foreach($supplier as $k)
                             <option value="{{ $k->supplier_id }}">{{ $k->supplier_nama }}</option>
@@ -29,13 +29,9 @@
                     <small id="error-barang_id" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
-                    <label>Nama penerima</label>
-                    <select name="user_id" id="user_id" class="form-control" required>
-                        <option value="">- Pilih penerima -</option>
-                        @foreach($user as $k)
-                            <option value="{{ $k->user_id }}">{{ $k->nama }}</option>
-                        @endforeach
-                    </select>
+                    <label for="user_id">Penginput</label>
+                    <input value="{{ auth()->user()->nama }}" type="text" class="form-control" readonly>
+                    <input type="hidden" name="user_id" value="{{ auth()->id() }}">
                     <small id="error-user_id" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
