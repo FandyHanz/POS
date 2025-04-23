@@ -188,27 +188,30 @@ class PenjualanController extends Controller
     public function delete_ajax(Request $request, $id)
     {
         // cek apakah request dari ajax
-        if ($request->ajax() || $request->wantsJson()) {
-            $penjualan = PenjualanModel::find($id);
-            if ($penjualan) {
-                try {
+        try {
+            if ($request->ajax() || $request->wantsJson()) {
+                $penjualan = PenjualanModel::find($id);
+                if ($penjualan) {
+                    // Delete all related details
+                    $penjualan->details()->delete();
+                    // Delete the penjualan itself
                     $penjualan->delete();
                     return response()->json([
                         'status' => true,
                         'message' => 'Data berhasil dihapus'
                     ]);
-                } catch (\Illuminate\Database\QueryException $e) {
+                } else {
                     return response()->json([
                         'status' => false,
-                        'message' => 'Terjadi kesalahan saat menghapus data: data masih berhubungan dengan data lain'
+                        'message' => 'Data tidak ditemukan'
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Data tidak ditemukan'
-                ]);
             }
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data gagal dihapus karena masih terdapat tabel lain yang terkait dengan data ini'
+            ]);
         }
         return redirect('/');
     }

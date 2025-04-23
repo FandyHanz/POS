@@ -15,7 +15,7 @@ class PenjualanModel extends Model
     protected $primaryKey = 'penjualan_id';
     protected $fillable = ['penjualan_id', 'user_id', 'pembeli','penjualan_kode', 'penjualan_tanggal','stok_tanggal', 'stok_jumlah'];
 
-    public function detail(): HasMany
+    public function details(): HasMany
     {
         return $this->hasMany(PenjualanDetailModel::class, 'penjualan_id', 'penjualan_id');
     }
