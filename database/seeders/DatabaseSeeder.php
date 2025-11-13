@@ -6,7 +6,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
-{
+{ // <-- Brace from line 9
     /**
      * Seed the application's database.
      */
@@ -25,9 +25,10 @@ class DatabaseSeeder extends Seeder
             // Data that depends on users and products
             StokSeeder::class,          // Depends on BarangSeeder and UserSeeder
             PenjualanSeeder::class,     // Depends on UserSeeder
-            
+
             // Data that depends on sales
             PenjualanDetailSeeder::class, // Depends on PenjualanSeeder and BarangSeeder
         ]);
-    }
-}
+    } // <-- This closes the run() method
+
+} // <-- ADD THIS LINE to close the class
