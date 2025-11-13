@@ -12,11 +12,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        $this->call([
+            // Independent data first
+            LevelSeeder::class,
+            KategoriSeeder::class,
+            SupplierSeeder::class,
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+            // Data that depends on the above
+            UserSeeder::class,     // Depends on LevelSeeder
+            BarangSeeder::class,   // Depends on KategoriSeeder
+
+            // Data that depends on users and products
+            StokSeeder::class,          // Depends on BarangSeeder and UserSeeder
+            PenjualanSeeder::class,     // Depends on UserSeeder
+            
+            // Data that depends on sales
+            PenjualanDetailSeeder::class, // Depends on PenjualanSeeder and BarangSeeder
+        ]);
     }
 }

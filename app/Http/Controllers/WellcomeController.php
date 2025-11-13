@@ -13,6 +13,6 @@ class WellcomeController extends Controller
         ];
 
         $activeMenu = 'dashboard';
-        return view('Welcome', ['breadcrumb' => $breadCrumb, 'activeMenu' => $activeMenu]);
+        return view('welcome', ['breadcrumb' => $breadCrumb, 'activeMenu' => $activeMenu]);
     }
 }
