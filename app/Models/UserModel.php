@@ -26,7 +26,7 @@ class UserModel extends Authenticatable implements JWTSubject
     protected $table = 'm_user';
     protected $primaryKey = 'user_id';
 
-    protected $fillable = ['level_id', 'username', 'nama', 'password', 'image'];
+    protected $fillable = ['level_id', 'username', 'nama', 'password'];
     protected $hidden = ['password'];
     protected $casts = ['password' => 'hashed'];
 
@@ -47,9 +47,4 @@ class UserModel extends Authenticatable implements JWTSubject
         return $this->level->level_kode;
     }
 
-    protected function image(){
-        return Attribute::make(
-            get:fn($image)=>url('/storage/posts/'.$image),
-        );
-    }
 }
