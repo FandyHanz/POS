@@ -133,16 +133,16 @@
     </li>
     <li class="nav-item dropdown user-menu">
       <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-        <img src="{{ asset('public/img/' . Auth::user()->username . '.jpg') }}" class="user-image img-circle elevation-2" alt="User Image">
-        <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
+        {{-- <img src="{{ asset('public/img/' . Auth::user()->username . '.jpg') }}" class="user-image img-circle elevation-2" alt="User Image"> --}}
+        {{-- <span class="d-none d-md-inline">{{ Auth::user()->name }}</span> --}}
       </a>
       <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
         <!-- User image -->
         <li class="user-header bg-primary">
-          <img src="{{ asset('public/img/' . Auth::user()->username . '.jpg') }}" class="img-circle elevation-2" alt="User Image">
+          {{-- <img src="{{ asset('public/img/' . Auth::user()->username . '.jpg') }}" class="img-circle elevation-2" alt="User Image">
           <p>
             {{ Auth::user()->name }}
-          </p>
+          </p> --}}
         </li>
         <!-- Menu Body -->
         <li class="user-footer">
@@ -188,9 +188,9 @@
   $(document).ready(function() {
       $('#profilePhotoForm').on('submit', function(e) {
           e.preventDefault();
-          
+
           var formData = new FormData(this);
-          
+
           $.ajax({
               url: $(this).attr('action'),
               type: 'POST',
